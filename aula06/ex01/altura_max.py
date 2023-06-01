@@ -1,0 +1,76 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+#bola de futebol chutada
+#com resistencia do ar
+
+v0 = 100    #velocidade inicial = 100km/h
+a = 10      #angulo com a horizontal
+g = 9.8     #gravidade
+dt = 0.01   #tempo do passo
+t0 = 0      #tempo inicial
+n = 1000    #numero de passos
+
+vt = 100    #velocidade terminal
+m = 1       #massa da bola
+d = g/vt**2 #constante D
+
+#funcão para calcular a força de resistencia do ar
+def forcaResAr(D, v, m):
+    v_norm = np.linalg.norm(v)
+    v_hat = v / v_norm
+    return -m * D * v_norm**2 * v_hat
+
+#aceleracao com resistencia do ar
+a = g - forcaResAr(d, v0, m) 
+
+#inicializar arrays para a posicao
+px = np.empty(n + 1)
+px[0] = 0
+
+py = np.empty(n + 1)
+py[0] = 0
+
+#inicializar arrays para a velocidade
+vx = np.empty(n + 1)
+vx[0] = v0 * np.cos(a)
+
+vy = np.empty(n + 1)
+vy[0] = v0 * np.sin(a)
+
+#for loop para calcular as posicoes e as velocidades
+for i in range(n):
+    #calcular a posicao
+    px[i + 1] = px[i] + vx[i] * dt
+    py[i + 1] = py[i] + vy[i] * dt
+
+    #calcular a velocidade
+    vx[i + 1] = vx[i]
+    vy[i + 1] = vy[i] - a * dt
+
+#plotar a trajetoria
+plt.plot(px, py)
+plt.xlabel("x (m)")
+plt.ylabel("y (m)")
+plt.title("Trajetoria da bola de futebol com resistencia do ar")
+
+#calcular a altura maxima
+a = max(py)
+print("A altura máxima atingida é: ", a)
+
+#determinar o x para a altura maxima
+for i in range(n):
+    if py[i] == a:
+        b = px[i]
+        print("O x para a altura máxima é: ", px[i])
+        break
+
+#plotar a altura maxima
+plt.ylim(0, 130)
+plt.plot(b, a, 'ro')
+
+plt.show()
+
+
+
+
